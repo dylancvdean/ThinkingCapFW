@@ -21,6 +21,9 @@ void pwm_init(void){
 	OCR1A = 0; //Duty cycle 0, motor off
 }
 
+void adc_setup(void){
+	ADMUX = (ADMUX | (1<<REFS1)) | (1 << REFS0);
+}
 void set_duty(uint8_t duty){
 
 	OCR1A = duty;
@@ -30,6 +33,7 @@ int main(void){
 	
 	power_save();
 	pwm_init();
+	adc_setup();
 
 	while(1){
 		for(uint8_t i = 0; i<255; i++){
