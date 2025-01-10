@@ -4,7 +4,7 @@ CC = avr-gcc
 CFLAGS = -mmcu=$(MCU) -DF_CPU=$(F_CPU) -Os
 OBJCPY = avr-objcopy
 AVRDUDE = avrdude
-PROGRAMMER = usbasp
+PROGRAMMER = usbtiny
 PORT = /dev/ttyUSB0 # Adjust if necessary
 
 TARGET = main
@@ -18,7 +18,7 @@ $(TARGET).hex: $(TARGET).elf
 	$(OBJCPY) -O ihex $< $@
 
 install: $(TARGET).hex
-	$(AVRDUDE) -c $(PROGRAMMER) -p $(MCU) -U flash:w:$(TARGET).hex
+	$(AVRDUDE) -c $(PROGRAMMER) -p $(MCU) -B 40 -U flash:w:$(TARGET).hex
 
 clean:
 	rm -f $(TARGET).elf $(TARGET).hex
