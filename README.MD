@@ -4,7 +4,7 @@ You need the avr suite to build and install this, as well as Make.
 
 On arch, this is obtained with `sudo pacman -S avrdude avr-binutils avr-gcc avr-gdb avr-libc make`
 
-##Building
+## Building
 
 To build, run `make`. You can specify the chip with e.g. `make CHIP=t13a`. Currently the t13a, 328p, and 328pb are supported. 
 
