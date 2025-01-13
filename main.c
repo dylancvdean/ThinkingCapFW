@@ -23,6 +23,11 @@ void pwm_init(void){
 
 void adc_setup(void){
 	ADMUX = (ADMUX | (1<<REFS1)) | (1 << REFS0);
+	DDRB &= ~(1 << PB3): // PB3 as input
+	DIDR0 |= (1 << ADC3D); // Disable PB3 digital input
+	ADMUX = (1 << MUX1) | (1 << MUX0); // Select ADC3
+	ADCSRA = (1 << ADEN) | (1 << ADPS1) | (1 << ADPS0); //Enable ADC, set prescaler to 8
+	
 }
 void set_duty(uint8_t duty){
 
