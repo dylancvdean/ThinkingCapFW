@@ -84,6 +84,15 @@ void calibrate(void) {
     eeprom_write_byte((uint8_t*)3, 1);
 }
 
+uint8_t linear_map(uint8_t val, uint8_t min, uint8_t max){
+    int res = (val - min) * 255 / (max - min);
+    if(res < 0){
+        calibrate();
+        return linear_map(val, eeprom_read_byte((uint8_t*)0), eeprom_read_byte((uint8_t*)1));
+    }
+    return (uint8_t)res;
+}
+
 int main(void) {
     power_save();
     pwm_init();
