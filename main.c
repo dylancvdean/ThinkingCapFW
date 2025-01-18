@@ -80,4 +80,21 @@ int main(void) {
             _delay_ms(10);
         }
     }
+    uint8_t samples[8] = {0};
+    uint8_t avg = 0;
+    while (1) {
+        for(uint8_t i = 0; i < 32; i++) {
+            samples[(i+1)/4] += read_adc() >> 4; // 10-bit ADC to 6-bit
+        }
+
+        {
+            uint16_t sum = 0;
+            for(uint8_t i = 0; i < 8; i++) {
+                sum+=samples[i];
+            }
+            avg = sum >> 3;
+        }
+
+        memset(samples, 0, sizeof(samples));
+    }
 }
