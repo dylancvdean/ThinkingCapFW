@@ -1,5 +1,5 @@
 # Allow override of chip type from command line
-CHIP ?= 328p
+CHIP ?= t13a
 
 ifeq ($(CHIP),328p)
     MCU = atmega328p
