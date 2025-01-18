@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
+#include <string.h>
 
 void power_save(void) {
     #ifdef __AVR_ATtiny13A__
@@ -70,31 +71,19 @@ int main(void) {
     pwm_init();
     adc_setup();
 
-    while (1) {
-        for (uint8_t i = 0; i < 255; i++) {
-            set_duty(i);
-            _delay_ms(10);
-        }
-        for (uint8_t i = 255; i > 0; i--) {
-            set_duty(i);
-            _delay_ms(10);
-        }
-    }
-    uint8_t samples[8] = {0};
-    uint8_t avg = 0;
+    uint8_t electrode_avg = 0;
+    uint16_t sum = 0;
     while (1) {
         for(uint8_t i = 0; i < 32; i++) {
-            samples[i/4] += (read_adc() >> 4); // 10-bit ADC to 6-bit
+            sum += (read_adc() >> 4); // 10-bit ADC to 6-bit
         }
+        electrode_avg = sum >> 3;
+        
+        set_duty(electrode_avg);
+        _delay_ms(10);
 
-        {
-            uint16_t sum = 0;
-            for(uint8_t i = 0; i < 8; i++) {
-                sum+=samples[i];
-            }
-            avg = sum >> 3;
-        }
 
-        memset(samples, 0, sizeof(samples));
+
+        sum = 0;
     }
 }
