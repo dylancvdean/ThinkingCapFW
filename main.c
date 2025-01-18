@@ -84,7 +84,7 @@ int main(void) {
     uint8_t avg = 0;
     while (1) {
         for(uint8_t i = 0; i < 32; i++) {
-            samples[(i+1)/4] += read_adc() >> 4; // 10-bit ADC to 6-bit
+            samples[i/4] += read_adc() >> 4; // 10-bit ADC to 6-bit
         }
 
         {
