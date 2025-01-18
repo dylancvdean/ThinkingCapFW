@@ -1,6 +1,6 @@
 #include <avr/io.h>
 #include <util/delay.h>
-#include <string.h>
+#include <avr/eeprom.h>
 
 void power_save(void) {
     #ifdef __AVR_ATtiny13A__
@@ -66,10 +66,36 @@ void set_duty(uint8_t duty) {
     #endif
 }
 
+void calibrate(void) {
+    uint8_t min = 255;
+    uint8_t max = 0;
+    for (uint16_t i = 0; i < 12000; i++) {
+        uint8_t val = read_adc() >> 2; // 10-bit ADC to 8-bit
+        if (val < min) {
+            min = val;
+        }
+        if (val > max) {
+            max = val;
+        }
+        _delay_ms(10);
+    }
+    eeprom_write_byte((uint8_t*)0, min);
+    eeprom_write_byte((uint8_t*)1, max);
+    eeprom_write_byte((uint8_t*)3, 1);
+}
+
 int main(void) {
     power_save();
     pwm_init();
     adc_setup();
+
+    if(eeprom_read_byte((uint8_t*)3) !=1) {
+        _delay_ms(2000);
+        calibrate();
+    }
+    uint8_t min = eeprom_read_byte((uint8_t*)0);
+    uint8_t max = eeprom_read_byte((uint8_t*)1);
+
 
     uint8_t electrode_avg = 0;
     uint16_t sum = 0;
