@@ -87,8 +87,10 @@ void calibrate(void) {
 uint8_t linear_map(uint8_t val, uint8_t min, uint8_t max){
     int res = (val - min) * 255 / (max - min);
     if(res < 0){
-        calibrate();
-        return linear_map(val, eeprom_read_byte((uint8_t*)0), eeprom_read_byte((uint8_t*)1));
+        return 0;
+    }
+    if(res > 255){
+        return 255;
     }
     return (uint8_t)res;
 }
@@ -97,11 +99,14 @@ int main(void) {
     power_save();
     pwm_init();
     adc_setup();
+    DDRB &= ~(1 << PB2); // Set PB2 as input
+    PORTB |= (1 << PB2); // Enable pull-up resistor
 
     if(eeprom_read_byte((uint8_t*)3) !=1) {
         _delay_ms(2000);
         calibrate();
     }
+
     uint8_t min = eeprom_read_byte((uint8_t*)0);
     uint8_t max = eeprom_read_byte((uint8_t*)1);
 
