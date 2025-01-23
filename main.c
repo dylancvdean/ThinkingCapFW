@@ -87,7 +87,7 @@ void calibrate(void) {
 uint8_t linear_map(uint8_t val, uint8_t min, uint8_t max){
     int res = (val - min) * 255 / (max - min);
     if(res < 0){
-        return 0;
+        return 0;  
     }
     if(res > 255){
         return 255;
@@ -114,12 +114,20 @@ int main(void) {
     uint8_t electrode_avg = 0;
     uint16_t sum = 0;
     while (1) {
+
+        if(!(PINB & (1 << PB2))) { //PB2 is grounded
+            set_duty(0); //signify calibration starting
+            calibrate();
+            
+            min = eeprom_read_byte((uint8_t*)0);
+            max = eeprom_read_byte((uint8_t*)1);
+        }
         for(uint8_t i = 0; i < 32; i++) {
             sum += (read_adc() >> 4); // 10-bit ADC to 6-bit
         }
         electrode_avg = sum >> 3;
         
-        set_duty(electrode_avg);
+        set_duty(linear_map(electrode_avg, min, max));
         _delay_ms(10);
 
 
