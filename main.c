@@ -102,7 +102,7 @@ int main(void) {
     DDRB &= ~(1 << PB2); // Set PB2 as input
     PORTB |= (1 << PB2); // Enable pull-up resistor
 
-    if(eeprom_read_byte((uint8_t*)3) !=1) {
+    if (eeprom_read_byte((uint8_t*)3) != 1) {
         _delay_ms(2000);
         calibrate();
     }
@@ -115,8 +115,10 @@ int main(void) {
     uint16_t sum = 0;
     while (1) {
 
-        if(!(PINB & (1 << PB2))) { //PB2 is grounded
-            set_duty(0); //signify calibration starting
+        if (!(PINB & (1 << PB2))) { // PB2 is grounded
+            set_duty(0); // signify calibration starting
+            _delay_ms(50); // debounce
+            while (!(PINB & (1 << PB2))); // wait for release
             calibrate();
             
             min = eeprom_read_byte((uint8_t*)0);
